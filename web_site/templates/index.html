@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Network Scanner</title>
+  </head>
+  <body>
+    <h1>Network Scanner</h1>
+    <form action="" method="post">
+      {% csrf_token %}
+      <label for="broadcast">Broadcast Address:</label>
+      <input type="text" id="broadcast" name="broadcast" />
+      <button type="submit">Scan</button>
+    </form>
+
+    {% if results %}
+    <h2>Scan Results:</h2>
+
+    <!-- Devices List -->
+    <h3>Devices List:</h3>
+    <table border="1">
+      <thead>
+        <tr>
+          <th>IP Address</th>
+          <th>MAC Address</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for device in results.devices %}
+        <tr>
+          <td>{{ device.ip }}</td>
+          <td>{{ device.mac }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <!-- Spoofed Devices List -->
+    {% if results.spoofed %}
+    <h3>Spoofed Devices:</h3>
+    <table border="1">
+      <thead>
+        <tr>
+          <th>IP Address</th>
+          <th>MAC Addresses</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for spoofed in results.spoofed %}
+        <tr>
+          <td>{{ spoofed.ip }}</td>
+          <td>
+            {% for mac in spoofed.macs %} {{ mac }}<br />
+            {% endfor %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p>Sahte MAC adresi bulunamadı.</p>
+    {% endif %}
+
+    <!-- Duplicate MAC Addresses List -->
+    {% if results.duplicate_mac %}
+    <h3>Duplicate MAC Addresses:</h3>
+    <table border="1">
+      <thead>
+        <tr>
+          <th>MAC Address</th>
+          <th>IP Addresses</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for duplicate in results.duplicate_mac %}
+        <tr>
+          <td>{{ duplicate.mac }}</td>
+          <td>
+            {% for ip in duplicate.ips %} {{ ip }}<br />
+            {% endfor %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %} {% endif %}
+  </body>
+</html>
